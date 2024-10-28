@@ -1,4 +1,5 @@
 import { semejanzaCromática, puntoCentral } from "./utils.js";
+import { Obstacle } from "./obstacle.js";
 
 export class Theremin {
   constructor(canvas, video) {
@@ -15,6 +16,8 @@ export class Theremin {
 
     this.jumpingSquare = document.getElementById("jumpingSquare"); // Cuadrado en el DOM
 
+    this.obstacle = new Obstacle(this.canvas);
+
     this.#animate();
   }
 
@@ -24,17 +27,26 @@ export class Theremin {
     // Dibujar el video en el canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const puntos = this.#obtenPuntosSegunColor(imageData, this.colorDelMarcador);
+    const puntos = this.#obtenPuntosSegunColor(
+      imageData,
+      this.colorDelMarcador
+    );
 
     // Dibujar el punto objetivo en el canvas
     ctx.beginPath();
     ctx.fillStyle = "white"; // Color del punto objetivo
-    ctx.arc(this.objetivo.x, this.objetivo.y, 10/*radio del circulo*/, 0, Math.PI * 2);//para dibujar el circulo
+    ctx.arc(
+      this.objetivo.x,
+      this.objetivo.y,
+      10 /*radio del circulo*/,
+      0,
+      Math.PI * 2
+    ); //para dibujar el circulo
     ctx.fill();
     ctx.closePath();
 
-
-
+    // Dibujar el obstáculo
+    this.obstacle.draw(ctx);
 
     if (puntos.length > 0) {
       const centro = puntoCentral(puntos);
@@ -42,19 +54,17 @@ export class Theremin {
       // Verificar si el marcador está cerca del punto objetivo
       const distancia = Math.sqrt(
         (centro.x - this.objetivo.x) ** 2 + (centro.y - this.objetivo.y) ** 2
-      );//dist entre el punto marcador y el objetivo
+      ); //dist entre el punto marcador y el objetivo
 
       if (distancia < this.umbral) {
         const square = document.getElementById("square");
         // Mover el cuadrado a la posición superior
         square.classList.add("arriba");
       } else {
-        
         // Mover el cuadrado a la posición inferior
         const square = document.getElementById("square");
         square.classList.remove("arriba");
       }
-      
 
       // Dibujar el marcador de rojo
       ctx.beginPath();
@@ -63,7 +73,6 @@ export class Theremin {
       ctx.fill();
       ctx.closePath();
     }
-
 
     requestAnimationFrame(this.#animate.bind(this));
   }
