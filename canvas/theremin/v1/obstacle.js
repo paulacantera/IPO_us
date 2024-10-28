@@ -10,6 +10,9 @@ export class Obstacle {
 
   move() {
     this.x -= this.speed; // Mueve el obstáculo hacia la izquierda
+    if (this.x <= 0) {
+      this.x = this.canvas.width;
+    }
   }
 
   draw(ctx) {

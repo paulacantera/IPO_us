@@ -74,6 +74,8 @@ export class Theremin {
       ctx.closePath();
     }
 
+    this.obstacle.move();
+
     requestAnimationFrame(this.#animate.bind(this));
   }
 
