@@ -9,13 +9,14 @@ export class Theremin {
 
     this.colorDelMarcador = { r: 0, g: 0, b: 255 };
     this.objetivo = { x: canvas.width / 2, y: canvas.height / 2 };
-    this.umbral = 20; //umbral de distancia para el punto objetivo
-    this.jumpHeight = 10; //altura de cada "salto"
-    this.currentTop = 5; //posición inicial del cuadrado
-    this.streakCounter = 0; //contador de tiempo en el objetivo
+    this.umbral = 20; // Umbral de distancia para el punto objetivo
 
-    this.jumpingSquare = document.getElementById("jumpingSquare"); // Cuadrado en el DOM
+    // Propiedades del cuadrado saltarín
+    this.square = { x: 50, y: canvas.height - 30, size: 20, isJumping: false };
+    this.jumpHeight = 40; // Altura de salto
+    this.groundPosition = canvas.height - 30;
 
+    // Inicialización del obstáculo
     this.obstacle = new Obstacle(this.canvas);
 
     this.#animate();
@@ -24,29 +25,24 @@ export class Theremin {
   #animate() {
     const { ctx, canvas, video } = this;
 
+    // Limpiar el canvas en cada frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // Dibujar el video en el canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const puntos = this.#obtenPuntosSegunColor(
-      imageData,
-      this.colorDelMarcador
-    );
+    const puntos = this.#obtenPuntosSegunColor(imageData, this.colorDelMarcador);
 
     // Dibujar el punto objetivo en el canvas
     ctx.beginPath();
-    ctx.fillStyle = "white"; // Color del punto objetivo
-    ctx.arc(
-      this.objetivo.x,
-      this.objetivo.y,
-      10 /*radio del circulo*/,
-      0,
-      Math.PI * 2
-    ); //para dibujar el circulo
+    ctx.fillStyle = "white";
+    ctx.arc(this.objetivo.x, this.objetivo.y, 10, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
 
-    // Dibujar el obstáculo
+    // Dibujar el obstáculo y moverlo
     this.obstacle.draw(ctx);
+    this.obstacle.move();
 
     if (puntos.length > 0) {
       const centro = puntoCentral(puntos);
@@ -54,19 +50,15 @@ export class Theremin {
       // Verificar si el marcador está cerca del punto objetivo
       const distancia = Math.sqrt(
         (centro.x - this.objetivo.x) ** 2 + (centro.y - this.objetivo.y) ** 2
-      ); //dist entre el punto marcador y el objetivo
+      );
 
       if (distancia < this.umbral) {
-        const square = document.getElementById("square");
-        // Mover el cuadrado a la posición superior
-        square.classList.add("arriba");
+        this.square.isJumping = true;
       } else {
-        // Mover el cuadrado a la posición inferior
-        const square = document.getElementById("square");
-        square.classList.remove("arriba");
+        this.square.isJumping = false;
       }
 
-      // Dibujar el marcador de rojo
+      // Dibujar el marcador de color detectado
       ctx.beginPath();
       ctx.fillStyle = "red";
       ctx.arc(centro.x, centro.y, 10, 0, Math.PI * 2);
@@ -74,7 +66,16 @@ export class Theremin {
       ctx.closePath();
     }
 
-    this.obstacle.move();
+    // Actualizar la posición del cuadrado saltarín
+    if (this.square.isJumping) {
+      this.square.y = this.groundPosition - this.jumpHeight;
+    } else {
+      this.square.y = this.groundPosition;
+    }
+
+    // Dibujar el cuadrado saltarín
+    ctx.fillStyle = "blue";
+    ctx.fillRect(this.square.x, this.square.y, this.square.size, this.square.size);
 
     requestAnimationFrame(this.#animate.bind(this));
   }
