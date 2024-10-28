@@ -6,7 +6,7 @@ export class Theremin {
     this.video = video;
     this.ctx = canvas.getContext("2d");
 
-    this.colorDelMarcador = { r: 0, g: 0, b: 255 };
+    this.colorDelMarcador = { r: 0, g: 255, b: 0 };
 
     // Definir el punto objetivo fijo en el centro del canvas
     this.objetivo = { x: canvas.width / 2, y: canvas.height / 2 };
