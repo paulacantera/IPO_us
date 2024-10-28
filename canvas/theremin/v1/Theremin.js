@@ -6,19 +6,12 @@ export class Theremin {
     this.video = video;
     this.ctx = canvas.getContext("2d");
 
-    this.colorDelMarcador = { r: 0, g: 255, b: 0 };
+    this.colorDelMarcador = { r: 0, g: 0, b: 255 };
     this.objetivo = { x: canvas.width / 2, y: canvas.height / 2 };
-    this.umbral = 20; // Umbral de distancia
-    this.jumpHeight = 10; // Altura de cada "salto"
-    this.currentTop = 5; // Posición inicial del cuadrado
-    this.streakCounter = 0; // Contador de tiempo en el objetivo
-
-    const audioCtx = new AudioContext();
-    this.osc = audioCtx.createOscillator();
-    this.osc.connect(audioCtx.destination);
-    this.freq = 0;
-    this.osc.frequency.value = this.freq;
-    this.osc.start();
+    this.umbral = 20; //umbral de distancia para el punto objetivo
+    this.jumpHeight = 10; //altura de cada "salto"
+    this.currentTop = 5; //posición inicial del cuadrado
+    this.streakCounter = 0; //contador de tiempo en el objetivo
 
     this.jumpingSquare = document.getElementById("jumpingSquare"); // Cuadrado en el DOM
 
@@ -36,9 +29,12 @@ export class Theremin {
     // Dibujar el punto objetivo en el canvas
     ctx.beginPath();
     ctx.fillStyle = "white"; // Color del punto objetivo
-    ctx.arc(this.objetivo.x, this.objetivo.y, 10, 0, Math.PI * 2);
+    ctx.arc(this.objetivo.x, this.objetivo.y, 10/*radio del circulo*/, 0, Math.PI * 2);//para dibujar el circulo
     ctx.fill();
     ctx.closePath();
+
+
+
 
     if (puntos.length > 0) {
       const centro = puntoCentral(puntos);
@@ -46,37 +42,28 @@ export class Theremin {
       // Verificar si el marcador está cerca del punto objetivo
       const distancia = Math.sqrt(
         (centro.x - this.objetivo.x) ** 2 + (centro.y - this.objetivo.y) ** 2
-      );
+      );//dist entre el punto marcador y el objetivo
 
       if (distancia < this.umbral) {
-        // Mover el cuadrado a la posición superior
-        this.freq = 440;
         const square = document.getElementById("square");
+        // Mover el cuadrado a la posición superior
         square.classList.add("arriba");
       } else {
+        
         // Mover el cuadrado a la posición inferior
-        this.freq = 0;
         const square = document.getElementById("square");
         square.classList.remove("arriba");
       }
       
-      this.osc.frequency.value = this.freq;
 
-      // Dibujar el marcador del color detectado
+      // Dibujar el marcador de rojo
       ctx.beginPath();
       ctx.fillStyle = "red";
       ctx.arc(centro.x, centro.y, 10, 0, Math.PI * 2);
       ctx.fill();
       ctx.closePath();
-    } else {
-      this.freq = 0;
-      this.osc.frequency.value = this.freq;
-      this.streakCounter = 0;
     }
 
-    const freqNode = document.getElementById("freq");
-    const valorFreq = Math.floor(this.freq);
-    freqNode.innerText = valorFreq.toString();
 
     requestAnimationFrame(this.#animate.bind(this));
   }
