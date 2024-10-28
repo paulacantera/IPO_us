@@ -16,8 +16,9 @@ export class Theremin {
     this.jumpHeight = 40; // Altura de salto
     this.groundPosition = canvas.height - 30;
 
-    // Inicialización del obstáculo
-    this.obstacle = new Obstacle(this.canvas);
+    // Inicialización de los obstáculos
+    this.groundObstacle = new Obstacle(this.canvas, canvas.height - 30); // Obstacle en la parte inferior
+    this.skyObstacle = new Obstacle(this.canvas, 410); // Obstacle en la parte superior, altura fija de 50px
 
     this.#animate();
   }
@@ -40,9 +41,12 @@ export class Theremin {
     ctx.fill();
     ctx.closePath();
 
-    // Dibujar el obstáculo y moverlo
-    this.obstacle.draw(ctx);
-    this.obstacle.move();
+    // Dibujar y mover obstáculos
+    this.groundObstacle.draw(ctx);
+    this.groundObstacle.move();
+    
+    this.skyObstacle.draw(ctx);
+    this.skyObstacle.move();
 
     if (puntos.length > 0) {
       const centro = puntoCentral(puntos);
