@@ -13,12 +13,12 @@ export class Theremin {
 
     // Propiedades del cuadrado saltarín
     this.square = { x: 50, y: canvas.height - 30, size: 20, isJumping: false };
-    this.jumpHeight = 40; // Altura de salto
+    this.jumpHeight = 40;
     this.groundPosition = canvas.height - 30;
 
     // Inicialización de los obstáculos
-    this.groundObstacle = new Obstacle(this.canvas, canvas.height - 30); // Obstacle en la parte inferior
-    this.skyObstacle = new Obstacle(this.canvas, 410); // Obstacle en la parte superior, altura fija de 50px
+    this.groundObstacle = new Obstacle(this.canvas,canvas.width, canvas.height - 30);
+    this.skyObstacle = new Obstacle(this.canvas,canvas.width + 160, 410);
 
     this.#animate();
   }

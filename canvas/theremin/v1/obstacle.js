@@ -1,7 +1,7 @@
 export class Obstacle {
-  constructor(canvas, yPosition, speed = 3, width = 20, height = 20) {
+  constructor(canvas, xPosition, yPosition, speed = 3, width = 20, height = 20) {
     this.canvas = canvas;
-    this.x = canvas.width; // Empieza desde el borde derecho
+    this.x = xPosition; // Empieza desde el borde derecho
     this.y = yPosition; // Posición y determinada en el constructor
     this.speed = speed; // Velocidad del obstáculo
     this.width = width; // Ancho del obstáculo
