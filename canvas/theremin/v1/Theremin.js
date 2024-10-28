@@ -7,10 +7,11 @@ export class Theremin {
     this.ctx = canvas.getContext("2d");
 
     this.colorDelMarcador = { r: 0, g: 255, b: 0 };
-
-    // Definir el punto objetivo fijo en el centro del canvas
     this.objetivo = { x: canvas.width / 2, y: canvas.height / 2 };
-    this.umbral = 20; // Umbral de distancia para considerar el objetivo alcanzado
+    this.umbral = 20; // Umbral de distancia
+    this.jumpHeight = 10; // Altura de cada "salto"
+    this.currentTop = 5; // Posición inicial del cuadrado
+    this.streakCounter = 0; // Contador de tiempo en el objetivo
 
     const audioCtx = new AudioContext();
     this.osc = audioCtx.createOscillator();
@@ -18,6 +19,8 @@ export class Theremin {
     this.freq = 0;
     this.osc.frequency.value = this.freq;
     this.osc.start();
+
+    this.jumpingSquare = document.getElementById("jumpingSquare"); // Cuadrado en el DOM
 
     this.#animate();
   }
@@ -46,16 +49,17 @@ export class Theremin {
       );
 
       if (distancia < this.umbral) {
-        // El usuario ha alcanzado el objetivo
-        ctx.fillStyle = "green"; // Cambiar el color del punto objetivo para indicar el éxito
-        this.freq = 440; // Emitir un sonido con una frecuencia específica para indicar éxito
-        const successMessage = document.getElementById("successMessage");
-        successMessage.style.display = "block";
+        // Mover el cuadrado a la posición superior
+        this.freq = 440;
+        const square = document.getElementById("square");
+        square.classList.add("arriba");
       } else {
-        this.freq = 0; // No emitir sonido si no se ha alcanzado el objetivo
-        const successMessage = document.getElementById("successMessage");
-        successMessage.style.display = "none";
+        // Mover el cuadrado a la posición inferior
+        this.freq = 0;
+        const square = document.getElementById("square");
+        square.classList.remove("arriba");
       }
+      
       this.osc.frequency.value = this.freq;
 
       // Dibujar el marcador del color detectado
@@ -65,10 +69,9 @@ export class Theremin {
       ctx.fill();
       ctx.closePath();
     } else {
-      this.freq = 0; // No emitir sonido si no se detecta el marcador
+      this.freq = 0;
       this.osc.frequency.value = this.freq;
-      const successMessage = document.getElementById("successMessage");
-      successMessage.style.display = "none";
+      this.streakCounter = 0;
     }
 
     const freqNode = document.getElementById("freq");
