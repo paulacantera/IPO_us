@@ -1,5 +1,12 @@
 export class Obstacle {
-  constructor(canvas, xPosition, yPosition, speed = 3, width = 20, height = 20) {
+  constructor(
+    canvas,
+    xPosition,
+    yPosition,
+    speed = 2,
+    width = 20,
+    height = 20
+  ) {
     this.canvas = canvas;
     this.x = xPosition; // Empieza desde el borde derecho
     this.y = yPosition; // Posición y determinada en el constructor
@@ -10,9 +17,12 @@ export class Obstacle {
 
   move() {
     this.x -= this.speed; // Mueve el obstáculo hacia la izquierda
-    if (this.x + this.width <= 0) { // Cuando el obstáculo sale del canvas
+    if (this.x + this.width <= 0) {
+      // Cuando el obstáculo sale del canvas
       this.x = this.canvas.width; // Lo reinicia en el borde derecho
     }
+
+    this.speed += 0.001;
   }
 
   draw(ctx) {
@@ -20,5 +30,13 @@ export class Obstacle {
     ctx.fillStyle = "white";
     ctx.fillRect(this.x, this.y, this.width, this.height); // Dibujar un cuadrado
     ctx.closePath();
+  }
+
+  getPositionX() {
+    return this.x;
+  }
+
+  reset(difference = 0) {
+    this.x = this.canvas.width + difference;
   }
 }

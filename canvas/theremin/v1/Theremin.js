@@ -17,8 +17,18 @@ export class Theremin {
     this.groundPosition = canvas.height - 30;
 
     // Inicialización de los obstáculos
-    this.groundObstacle = new Obstacle(this.canvas,canvas.width, canvas.height - 30);
-    this.skyObstacle = new Obstacle(this.canvas,canvas.width + 160, 410);
+    this.groundObstacle = new Obstacle(
+      this.canvas,
+      canvas.width,
+      canvas.height - 30
+    );
+
+    this.obstacleDifference = 160;
+    this.skyObstacle = new Obstacle(
+      this.canvas,
+      canvas.width + this.obstacleDifference,
+      410
+    );
 
     this.#animate();
   }
@@ -32,7 +42,10 @@ export class Theremin {
     // Dibujar el video en el canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const puntos = this.#obtenPuntosSegunColor(imageData, this.colorDelMarcador);
+    const puntos = this.#obtenPuntosSegunColor(
+      imageData,
+      this.colorDelMarcador
+    );
 
     // Dibujar el punto objetivo en el canvas
     ctx.beginPath();
@@ -44,7 +57,7 @@ export class Theremin {
     // Dibujar y mover obstáculos
     this.groundObstacle.draw(ctx);
     this.groundObstacle.move();
-    
+
     this.skyObstacle.draw(ctx);
     this.skyObstacle.move();
 
@@ -79,7 +92,23 @@ export class Theremin {
 
     // Dibujar el cuadrado saltarín
     ctx.fillStyle = "blue";
-    ctx.fillRect(this.square.x, this.square.y, this.square.size, this.square.size);
+    ctx.fillRect(
+      this.square.x,
+      this.square.y,
+      this.square.size,
+      this.square.size
+    );
+
+    if (
+      (Math.abs(this.groundObstacle.getPositionX() - this.square.x) <= 20 &&
+        this.square.isJumping === false) ||
+      (Math.abs(this.skyObstacle.getPositionX() - this.square.x) <= 20 &&
+        this.square.isJumping === true)
+    ) {
+      alert("perdiste!!");
+      this.groundObstacle.reset();
+      this.skyObstacle.reset(this.obstacleDifference);
+    }
 
     requestAnimationFrame(this.#animate.bind(this));
   }
