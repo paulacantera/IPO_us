@@ -3,7 +3,7 @@ export class Obstacle {
     canvas,
     xPosition,
     yPosition,
-    speed = 2,
+    speed = 0.5,
     width = 20,
     height = 20
   ) {
@@ -38,5 +38,6 @@ export class Obstacle {
 
   reset(difference = 0) {
     this.x = this.canvas.width + difference;
+    this.speed = 0.5;
   }
 }
