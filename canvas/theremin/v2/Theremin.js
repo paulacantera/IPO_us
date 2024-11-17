@@ -119,16 +119,16 @@ export class Theremin {
       this.blueSquare.size
     );
 
-    if (
-      (Math.abs(this.groundObstacle.getPositionX() - this.blueSquare.x) <= 15 &&
-        this.blueSquare.isJumping === false) ||
-      (Math.abs(this.skyObstacle.getPositionX() - this.blueSquare.x) <= 15 &&
-        this.blueSquare.isJumping === true)
-    ) {
-      alert("perdiste!!");
-      this.groundObstacle.reset();
-      this.skyObstacle.reset(this.obstacleDifference);
-    }
+    // if (
+    //   (Math.abs(this.groundObstacle.getPositionX() - this.blueSquare.x) <= 15 &&
+    //     this.blueSquare.isJumping === false) ||
+    //   (Math.abs(this.skyObstacle.getPositionX() - this.blueSquare.x) <= 15 &&
+    //     this.blueSquare.isJumping === true)
+    // ) {
+    //   alert("perdiste!!");
+    //   this.groundObstacle.reset();
+    //   this.skyObstacle.reset(this.obstacleDifference);
+    // }
 
     requestAnimationFrame(this.#animate.bind(this));
   }
